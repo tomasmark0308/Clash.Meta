@@ -17,6 +17,9 @@ func trimArr(arr []string) (r []string) {
 	return
 }
 
+// TODO Export for outside use
+var TrimArr = trimArr
+
 // Check if ProxyGroups form DAG(Directed Acyclic Graph), and sort all ProxyGroups by dependency order.
 // Meanwhile, record the original index in the config file.
 // If loop is detected, return an error with location of loop.
