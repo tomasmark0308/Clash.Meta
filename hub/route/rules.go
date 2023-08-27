@@ -31,16 +31,24 @@ type Rule struct {
 	Proxy   string `json:"proxy"`
 	Size    int    `json:"size"`
 }
+// A wrapper type to add index field
+type NumRule struct {
+	Index	int	   `json:"number"`
+	Rule
+}
 
 func getRules(w http.ResponseWriter, r *http.Request) {
 	rawRules := tunnel.Rules()
-	rules := []Rule{}
-	for _, rule := range rawRules {
-		r := Rule{
-			Type:    rule.RuleType().String(),
-			Payload: rule.Payload(),
-			Proxy:   rule.Adapter(),
-			Size:    -1,
+	rules := []NumRule{}
+	for idx, rule := range rawRules {
+		r := NumRule {
+			Index:  idx,
+			Rule: Rule {
+				Type:    rule.RuleType().String(),
+				Payload: rule.Payload(),
+				Proxy:   rule.Adapter(),
+				Size:    -1,
+			},
 		}
 		if rule.RuleType() == constant.GEOIP || rule.RuleType() == constant.GEOSITE {
 			r.Size = rule.(constant.RuleGroup).GetRecodeSize()
