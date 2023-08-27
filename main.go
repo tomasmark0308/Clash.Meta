@@ -23,6 +23,7 @@ import (
 var (
 	flagset            map[string]bool
 	version            bool
+	initConfig         bool
 	testConfig         bool
 	geodataMode        bool
 	homeDir            string
@@ -34,6 +35,7 @@ var (
 
 func init() {
 	flag.StringVar(&homeDir, "d", "", "set configuration directory")
+	flag.BoolVar(&initConfig, "init-config", false, "initialize configuration directory and files")
 	flag.StringVar(&configFile, "f", "", "specify configuration file")
 	flag.StringVar(&externalUI, "ext-ui", "", "override external ui directory")
 	flag.StringVar(&externalController, "ext-ctl", "", "override external controller address")
@@ -84,8 +86,24 @@ func main() {
 		C.GeodataMode = true
 	}
 
-	if err := config.Init(C.Path.HomeDir()); err != nil {
-		log.Fatalln("Initial configuration directory error: %s", err.Error())
+	if !initConfig {
+		if _, err := os.Stat(C.Path.HomeDir()); os.IsNotExist(err) {
+			fmt.Printf("Configuration directory does not exist:\n  %s\n",
+						C.Path.HomeDir())
+			fmt.Println("Setting with `-d` or use -init-config to initialize.")
+			return
+		}
+
+		if _, err := os.Stat(C.Path.Config()); os.IsNotExist(err) {
+			fmt.Printf("Configuration file does not exist:\n  %s\n",
+						C.Path.Config())
+			fmt.Println("Setting with `-f` or use -init-config to initialize.")
+			return
+		}
+	}
+
+	if err := config.Init(); err != nil {
+		log.Fatalln("Initialize configuration directory error: %s", err.Error())
 	}
 
 	if testConfig {
