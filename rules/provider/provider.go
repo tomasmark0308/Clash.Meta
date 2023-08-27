@@ -14,9 +14,6 @@ import (
 	C "github.com/Dreamacro/clash/constant"
 	P "github.com/Dreamacro/clash/constant/provider"
 	RC "github.com/Dreamacro/clash/rules/common"
-	"gopkg.in/yaml.v3"
-	"runtime"
-	"time"
 )
 
 var (
@@ -122,14 +119,14 @@ func (rp *ruleSetProvider) MarshalJSON() ([]byte, error) {
 
 func NewRuleSetProvider(
 	name string,
-	behavior P.RuleType,
+	behavior P.RuleBehavior,
+	format P.RuleFormat,
 	interval time.Duration,
 	vehicle P.Vehicle,
 	parse RC.ParseRuleFunc,
 ) P.RuleProvider {
 	rp := &ruleSetProvider{
 		behavior: behavior,
-		format:   format,
 	}
 
 	onUpdate := func(elm interface{}) {
@@ -149,7 +146,7 @@ func NewRuleSetProvider(
 	return wrapper
 }
 
-func newStrategy(behavior P.RuleType, parse RC.ParseRuleFunc) ruleStrategy {
+func newStrategy(behavior P.RuleBehavior, parse RC.ParseRuleFunc) ruleStrategy {
 	switch behavior {
 	case P.Domain:
 		strategy := NewDomainStrategy()
