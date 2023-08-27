@@ -8,6 +8,7 @@ import (
 	"os/signal"
 	"path/filepath"
 	"runtime"
+	"runtime/debug"
 	"strings"
 	"syscall"
 
@@ -53,9 +54,22 @@ func init() {
 
 func main() {
 	_, _ = maxprocs.Set(maxprocs.Logger(func(string, ...any) {}))
+
 	if version {
-		fmt.Printf("Clash Meta %s %s %s with %s %s\n",
-			C.Version, runtime.GOOS, runtime.GOARCH, runtime.Version(), C.BuildTime)
+		commit := ""
+		if info, ok := debug.ReadBuildInfo(); ok {
+			for _, setting := range info.Settings {
+				if setting.Key == "vcs.revision" {
+					commit = setting.Value
+					break
+				}
+			}
+		}
+
+		fmt.Printf("Clash Meta CX %s@g%s %s %s with %s %s\n",
+			C.Version, commit, runtime.GOOS, runtime.GOARCH, 
+			runtime.Version(), C.BuildTime,
+		)
 		if len(features.TAGS) != 0 {
 			fmt.Printf("Use tags: %s\n", strings.Join(features.TAGS, ", "))
 		}
