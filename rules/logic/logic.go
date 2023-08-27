@@ -7,11 +7,11 @@ import (
 
 	"github.com/Dreamacro/clash/common/collections"
 	C "github.com/Dreamacro/clash/constant"
-	"github.com/Dreamacro/clash/rules/common"
+	RC "github.com/Dreamacro/clash/rules/common"
 )
 
 type Logic struct {
-	*common.Base
+	*RC.Base
 	payload     string
 	adapter     string
 	ruleType    C.RuleType
@@ -21,10 +21,8 @@ type Logic struct {
 	needProcess bool
 }
 
-type ParseRuleFunc func(tp, payload, target string, params []string, subRules map[string][]C.Rule) (C.Rule, error)
-
-func NewSubRule(payload, adapter string, subRules map[string][]C.Rule, parseRule ParseRuleFunc) (*Logic, error) {
-	logic := &Logic{Base: &common.Base{}, payload: payload, adapter: adapter, ruleType: C.SubRules}
+func NewSubRule(payload, adapter string, subRules map[string][]C.Rule, parseRule RC.ParseRuleFunc) (*Logic, error) {
+	logic := &Logic{Base: &RC.Base{}, payload: payload, adapter: adapter, ruleType: C.SubRules}
 	err := logic.parsePayload(fmt.Sprintf("(%s)", payload), parseRule)
 	if err != nil {
 		return nil, err
@@ -45,8 +43,8 @@ func NewSubRule(payload, adapter string, subRules map[string][]C.Rule, parseRule
 	return logic, nil
 }
 
-func NewNOT(payload string, adapter string, parseRule ParseRuleFunc) (*Logic, error) {
-	logic := &Logic{Base: &common.Base{}, payload: payload, adapter: adapter, ruleType: C.NOT}
+func NewNOT(payload string, adapter string, parseRule RC.ParseRuleFunc) (*Logic, error) {
+	logic := &Logic{Base: &RC.Base{}, payload: payload, adapter: adapter, ruleType: C.NOT}
 	err := logic.parsePayload(payload, parseRule)
 	if err != nil {
 		return nil, err
@@ -61,8 +59,8 @@ func NewNOT(payload string, adapter string, parseRule ParseRuleFunc) (*Logic, er
 	return logic, nil
 }
 
-func NewOR(payload string, adapter string, parseRule ParseRuleFunc) (*Logic, error) {
-	logic := &Logic{Base: &common.Base{}, payload: payload, adapter: adapter, ruleType: C.OR}
+func NewOR(payload string, adapter string, parseRule RC.ParseRuleFunc) (*Logic, error) {
+	logic := &Logic{Base: &RC.Base{}, payload: payload, adapter: adapter, ruleType: C.OR}
 	err := logic.parsePayload(payload, parseRule)
 	if err != nil {
 		return nil, err
@@ -82,8 +80,8 @@ func NewOR(payload string, adapter string, parseRule ParseRuleFunc) (*Logic, err
 
 	return logic, nil
 }
-func NewAND(payload string, adapter string, parseRule ParseRuleFunc) (*Logic, error) {
-	logic := &Logic{Base: &common.Base{}, payload: payload, adapter: adapter, ruleType: C.AND}
+func NewAND(payload string, adapter string, parseRule RC.ParseRuleFunc) (*Logic, error) {
+	logic := &Logic{Base: &RC.Base{}, payload: payload, adapter: adapter, ruleType: C.AND}
 	err := logic.parsePayload(payload, parseRule)
 	if err != nil {
 		return nil, err
@@ -114,7 +112,7 @@ func (r Range) containRange(preStart, preEnd int) bool {
 	return preStart < r.start && preEnd > r.end
 }
 
-func (logic *Logic) payloadToRule(subPayload string, parseRule ParseRuleFunc) (C.Rule, error) {
+func (logic *Logic) payloadToRule(subPayload string, parseRule RC.ParseRuleFunc) (C.Rule, error) {
 	splitStr := strings.SplitN(subPayload, ",", 2)
 	if len(splitStr) < 2 {
 		return nil, fmt.Errorf("[%s] format is error", subPayload)
@@ -194,7 +192,7 @@ func (logic *Logic) findSubRuleRange(payload string, ruleRanges []Range) []Range
 	return subRuleRange
 }
 
-func (logic *Logic) parsePayload(payload string, parseRule ParseRuleFunc) error {
+func (logic *Logic) parsePayload(payload string, parseRule RC.ParseRuleFunc) error {
 	regex, err := regexp.Compile("\\(.*\\)")
 	if err != nil {
 		return err

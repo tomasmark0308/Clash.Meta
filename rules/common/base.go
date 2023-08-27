@@ -2,6 +2,7 @@ package common
 
 import (
 	"errors"
+	C "github.com/Dreamacro/clash/constant"
 )
 
 var (
@@ -28,3 +29,13 @@ func HasNoResolve(params []string) bool {
 	}
 	return false
 }
+
+
+// function signature for easier reference
+// see rules/parser.go
+type ParseRuleFunc func(
+	tp, payload,
+	target string,
+	params []string,
+	subRules map[string][]C.Rule,
+) (parsed C.Rule, parseErr error)

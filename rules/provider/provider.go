@@ -13,6 +13,10 @@ import (
 	"github.com/Dreamacro/clash/component/resource"
 	C "github.com/Dreamacro/clash/constant"
 	P "github.com/Dreamacro/clash/constant/provider"
+	RC "github.com/Dreamacro/clash/rules/common"
+	"gopkg.in/yaml.v3"
+	"runtime"
+	"time"
 )
 
 var (
@@ -116,8 +120,13 @@ func (rp *ruleSetProvider) MarshalJSON() ([]byte, error) {
 		})
 }
 
-func NewRuleSetProvider(name string, behavior P.RuleBehavior, format P.RuleFormat, interval time.Duration, vehicle P.Vehicle,
-	parse func(tp, payload, target string, params []string, subRules map[string][]C.Rule) (parsed C.Rule, parseErr error)) P.RuleProvider {
+func NewRuleSetProvider(
+	name string,
+	behavior P.RuleType,
+	interval time.Duration,
+	vehicle P.Vehicle,
+	parse RC.ParseRuleFunc,
+) P.RuleProvider {
 	rp := &ruleSetProvider{
 		behavior: behavior,
 		format:   format,
@@ -140,7 +149,7 @@ func NewRuleSetProvider(name string, behavior P.RuleBehavior, format P.RuleForma
 	return wrapper
 }
 
-func newStrategy(behavior P.RuleBehavior, parse func(tp, payload, target string, params []string, subRules map[string][]C.Rule) (parsed C.Rule, parseErr error)) ruleStrategy {
+func newStrategy(behavior P.RuleType, parse RC.ParseRuleFunc) ruleStrategy {
 	switch behavior {
 	case P.Domain:
 		strategy := NewDomainStrategy()
