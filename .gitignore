@@ -5,6 +5,7 @@
 *.so
 *.dylib
 bin/*
+/clash
 
 # Test binary, build with `go test -c`
 *.test

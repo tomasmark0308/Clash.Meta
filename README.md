@@ -40,6 +40,7 @@ Then get the source code of Clash.Meta:
 
 ```shell
 git clone https://github.com/MetaCubeX/Clash.Meta.git
+# download the module, probably not needed
 cd Clash.Meta && go mod download
 ```
 
@@ -49,7 +50,10 @@ If you can't visit github,you should set proxy first:
 go env -w GOPROXY=https://goproxy.io,direct
 ```
 
-Now you can build it:
+If you are familiar with Makefile, you should take a look at it. It already
+includes recipes for building for various targets.
+
+Or for a start, you can try to build it manually:
 
 ```shell
 go build
