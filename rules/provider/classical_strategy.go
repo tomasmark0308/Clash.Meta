@@ -3,6 +3,7 @@ package provider
 import (
 	"fmt"
 	C "github.com/Dreamacro/clash/constant"
+	RC "github.com/Dreamacro/clash/rules/common"
 	"github.com/Dreamacro/clash/log"
 	"strings"
 )
@@ -82,7 +83,7 @@ func ruleParse(ruleRaw string) (string, string, []string) {
 	return "", "", nil
 }
 
-func NewClassicalStrategy(parse func(tp, payload, target string, params []string, subRules map[string][]C.Rule) (parsed C.Rule, parseErr error)) *classicalStrategy {
+func NewClassicalStrategy(parse RC.ParseRuleFunc) *classicalStrategy {
 	return &classicalStrategy{rules: []C.Rule{}, parse: func(tp, payload, target string, params []string) (parsed C.Rule, parseErr error) {
 		switch tp {
 		case "MATCH", "SUB-RULE":
