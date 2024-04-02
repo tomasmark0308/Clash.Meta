@@ -1,0 +1,49 @@
+From be795c913701851a73d956dd9e878ce76274a1a8 Mon Sep 17 00:00:00 2001
+From: Tomas Mark <tomasmark0308@gmail.com>
+Date: Sun, 27 Aug 2023 16:29:50 +0000
+Subject: [PATCH 6/8] rules.go: add index field
+
+for printing and later reference
+---
+ hub/route/rules.go | 22 +++++++++++++++-------
+ 1 file changed, 15 insertions(+), 7 deletions(-)
+
+diff --git a/hub/route/rules.go b/hub/route/rules.go
+index 9139be3a..a86fefc8 100644
+--- a/hub/route/rules.go
++++ b/hub/route/rules.go
+@@ -31,16 +31,24 @@ type Rule struct {
+ 	Proxy   string `json:"proxy"`
+ 	Size    int    `json:"size"`
+ }
++// A wrapper type to add index field
++type NumRule struct {
++	Index	int	   `json:"number"`
++	Rule
++}
+ 
+ func getRules(w http.ResponseWriter, r *http.Request) {
+ 	rawRules := tunnel.Rules()
+-	rules := []Rule{}
+-	for _, rule := range rawRules {
+-		r := Rule{
+-			Type:    rule.RuleType().String(),
+-			Payload: rule.Payload(),
+-			Proxy:   rule.Adapter(),
+-			Size:    -1,
++	rules := []NumRule{}
++	for idx, rule := range rawRules {
++		r := NumRule {
++			Index:  idx,
++			Rule: Rule {
++				Type:    rule.RuleType().String(),
++				Payload: rule.Payload(),
++				Proxy:   rule.Adapter(),
++				Size:    -1,
++			},
+ 		}
+ 		if rule.RuleType() == constant.GEOIP || rule.RuleType() == constant.GEOSITE {
+ 			r.Size = rule.(constant.RuleGroup).GetRecodeSize()
+-- 
+2.39.2
+

@@ -10,7 +10,8 @@ import (
 	"github.com/Dreamacro/clash/common/structure"
 )
 
-func trimArr(arr []string) (r []string) {
+// Trime whitespace from every string in the array
+func TrimArr(arr []string) (r []string) {
 	for _, e := range arr {
 		r = append(r, strings.Trim(e, " "))
 	}

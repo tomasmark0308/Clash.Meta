@@ -787,7 +787,7 @@ func parseRules(rulesConfig []string, proxies map[string]C.Proxy, subRules map[s
 
 	// parse rules
 	for idx, line := range rulesConfig {
-		rule := trimArr(strings.Split(line, ","))
+		rule := TrimArr(strings.Split(line, ","))
 		var (
 			payload  string
 			target   string
@@ -825,7 +825,7 @@ func parseRules(rulesConfig []string, proxies map[string]C.Proxy, subRules map[s
 			}
 		}
 
-		params = trimArr(params)
+		params = TrimArr(params)
 		parsed, parseErr := R.ParseRule(ruleName, payload, target, params, subRules)
 		if parseErr != nil {
 			return nil, fmt.Errorf("%s[%d] [%s] error: %s", format, idx, line, parseErr.Error())

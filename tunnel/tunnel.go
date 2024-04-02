@@ -122,6 +122,13 @@ func UpdateRules(newRules []C.Rule, newSubRule map[string][]C.Rule, rp map[strin
 	configMux.Unlock()
 }
 
+// Insert newRule at the head.
+func InsertRule(newRule C.Rule){
+	configMux.Lock()
+	rules = append([]C.Rule{newRule}, rules...)
+	configMux.Unlock()
+}
+
 // Proxies return all proxies
 func Proxies() map[string]C.Proxy {
 	return proxies
